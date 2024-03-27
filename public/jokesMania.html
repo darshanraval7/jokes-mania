@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jokes R Us</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Styling for loader */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+            margin-top: 20px;
+            display: none; /* Initially hide loader */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Styling for copy button */
+        .copy-button {
+            background-color: #0077cc; /* Blue */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .copy-button:hover {
+            background-color: 0077cc;
+        }
+
+        /* Tooltip text */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Jokes R Us</h1>
+        <nav>
+            <ul>
+                <li><a href="/">He He Bhaisaab</a></li>
+                <li><a href="/jokesMania">Jokes Mania</a></li>
+                <li><a href="#">Joka Joky</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="jokes-container">
+            <!-- Jokes will be dynamically added here -->
+        </section>
+        <div class="loader"></div> <!-- Loader element -->
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Jokes R Us</p>
+    </footer>
+
+    <!-- Importing script.js -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const jokesContainer = document.querySelector('.jokes-container');
+            const loader = document.querySelector('.loader'); // Selecting loader element
+
+            // Show loader before making the API call
+            loader.style.display = 'block';
+
+            fetch('/api/tenJokes')
+            .then(response => response.json())
+            .then(jokes => {
+                jokes.forEach(joke => {
+                    const jokeElement = document.createElement('div');
+                    jokeElement.classList.add('joke');
+                    const jokeText = document.createElement('p');
+                    jokeText.textContent = joke.setup + ` Punch Line - ` + joke.punchLine;
+                    jokeElement.appendChild(jokeText);
+                    
+                    // Creating and adding copy button
+                    const copyButton = document.createElement('button');
+                    copyButton.classList.add('copy-button');
+                    copyButton.textContent = 'Copy';
+                    copyButton.onclick = function() {
+                        // Copy joke text to clipboard
+                        const textToCopy = joke.setup + ` Punch Line - ` + joke.punchLine;
+                        navigator.clipboard.writeText(textToCopy)
+                            .then(() => {
+                                // Show tooltip indicating successful copy
+                                const tooltip = document.createElement('span');
+                                copyButton.textContent = 'Copied!';
+                                tooltip.className = 'tooltiptext';
+                                copyButton.appendChild(tooltip);
+                                setTimeout(() => {
+                                    copyButton.textContent = 'Copy';
+                                }, 1500);
+                            })
+                            .catch(err => console.error('Failed to copy text: ', err));
+                    };
+                    jokeElement.appendChild(copyButton);
+
+                    jokesContainer.appendChild(jokeElement);
+                });
+                // Hide loader after receiving the response and populating jokes
+                loader.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error fetching jokes:', error);
+                // Hide loader in case of error
+                loader.style.display = 'none';
+            });
+        });
+    </script>
+
+</body>
+</html>

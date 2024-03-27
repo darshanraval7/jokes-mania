@@ -1,0 +1,17 @@
+{
+  "name": "jokes-mania",
+  "version": "1.0.0",
+  "description": "Your daily destination for laughs! Discover a treasure trove of humor with our jokes website, where giggles and guffaws await.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0"
+  }
+}
